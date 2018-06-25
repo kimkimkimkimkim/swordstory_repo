@@ -11,4 +11,5 @@ public class CloseStageSelectViewScript : MonoBehaviour {
 	public void OnClick(){
 		Destroy (prefabView);
 	}
+	
 }
