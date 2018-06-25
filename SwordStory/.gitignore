@@ -30,4 +30,4 @@ sysinfo.txt
 
 # .gitignore
 # .DS_Store banished!
-*.DS_Store
+.DS_Store
