@@ -9,6 +9,7 @@ public class GoToHome : MonoBehaviour {
 	//ホーム画面に移動
 	public void OnClick(){
 		SceneManager.LoadScene("HomeScene");
+		
 	}
 
 }

@@ -9,23 +9,29 @@ public class BattleSceneManager : MonoBehaviour {
 	// Use this for initialization
 	public GameObject obj;
 	public GameObject imageClear;
+	public GameObject imageFail;
 	private float life_time = 1.0f;
 	public GameObject canvas;
 	public GameObject ballEffectPrefab;
 	private GameObject ballEffect;
+
     float time = 0f;
 	float scale = 0f;
 	Slider _slider;
 	float _hp = 1;
+	int remainingHp = 3;
 	GameObject[] tagObjects;
+	GameObject[] fillHearts;
 
 	// 処理が終わったどうかを示すフラグ
     bool iTweenMoving = false;
 
 	void Start () {
+		fillHearts = GameObject.FindGameObjectsWithTag("FillHearts");
 		_slider = GameObject.Find("SliderEnemy").GetComponent<Slider>();
 		obj.SetActive(false);
 		imageClear.SetActive(false);
+		imageFail.SetActive(false);
 		Generation();
 	}
 	
@@ -36,6 +42,7 @@ public class BattleSceneManager : MonoBehaviour {
 	void Generation(){
 		ballEffect = (GameObject)Instantiate(ballEffectPrefab);
 		ballEffect.transform.SetParent(canvas.transform, false);
+		ballEffect.transform.SetSiblingIndex(2); 
 		ballEffect.transform.localPosition = new Vector3(
 			UnityEngine.Random.Range(-300.0f,300.0f),
 			UnityEngine.Random.Range(-300.0f,300.0f),
@@ -53,8 +60,19 @@ public class BattleSceneManager : MonoBehaviour {
         tagObjects = GameObject.FindGameObjectsWithTag(tagname);
         if(tagObjects.Length == 0){
 			Generation();
+			if(remainingHp > 0){
+				Destroy(fillHearts[remainingHp-1]);
+				remainingHp--;
+			}
+			if(remainingHp == 0 && _hp > 0){
+				imageFail.SetActive(true);
+			}
         }
     }
+
+	public void OnBallClick () {
+		Destroy(ballEffect);
+	}
 
 	void Update () {
 		_slider.value = _hp;
