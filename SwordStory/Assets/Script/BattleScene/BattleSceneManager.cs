@@ -14,6 +14,13 @@ public class BattleSceneManager : MonoBehaviour {
 	public GameObject canvas;
 	public GameObject ballEffectPrefab;
 	private GameObject ballEffect;
+	private float[] skillGauge; 
+
+	public Vector2 startPos;
+    public Vector2 direction;
+
+    private Text m_Text;
+    string message;
 
     float time = 0f;
 	float scale = 0f;
@@ -27,6 +34,7 @@ public class BattleSceneManager : MonoBehaviour {
     bool iTweenMoving = false;
 
 	void Start () {
+		skillGauge = new float[4] {1,1,1,1};
 		fillHearts = GameObject.FindGameObjectsWithTag("FillHearts");
 		_slider = GameObject.Find("SliderEnemy").GetComponent<Slider>();
 		obj.SetActive(false);
@@ -87,6 +95,37 @@ public class BattleSceneManager : MonoBehaviour {
 
 		}
 
+        // Track a single touch as a direction control.
+        if (Input.touchCount > 0)
+        {
+            Touch touch = Input.GetTouch(0);
+
+            // Handle finger movements based on TouchPhase
+            switch (touch.phase)
+            {
+                //When a touch has first been detected, change the message and record the starting position
+                case TouchPhase.Began:
+                    // Record initial touch position.
+                    startPos = touch.position;
+                    message = "Begun ";
+                    break;
+
+                //Determine if the touch is a moving touch
+                case TouchPhase.Moved:
+                    // Determine direction by comparing the current touch position with the initial one
+                    direction = touch.position - startPos;
+                    message = "Moving ";
+                    break;
+
+                case TouchPhase.Ended:
+                    // Report that the touch has ended when it ends
+                    message = "Ending ";
+                    break;
+            }
+					//Update the Text on the screen depending on current TouchPhase, and the current direction vector
+       		m_Text.text = "Touch : " + message + "in direction" + direction;
+			Debug.Log(m_Text);
+		}
 	}
 
 	void OnEnable(){
@@ -112,8 +151,17 @@ public class BattleSceneManager : MonoBehaviour {
     	// ジェスチャが適切かチェック
     	if (gesture.State != FlickGesture.GestureState.Recognized)return;
     	// 処理したい内容
+
     	Debug.Log("Flicked");
-		_hp -= 0.1f;        
+
+		skillGauge[0] -= 0.1f;
+		skillGauge[1] -= 0.1f;
+		skillGauge[2] -= 0.1f;
+		skillGauge[3] -= 0.1f;
+
+		_hp -= 0.1f;
+
+		obj.transform.eulerAngles = new Vector3(0,0,gesture.ScreenFlickVector.y);
 		obj.SetActive(true);
 		time = 0;
 	}
