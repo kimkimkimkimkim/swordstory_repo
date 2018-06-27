@@ -7,6 +7,10 @@ public class DefenseManager : MonoBehaviour {
 	//オブジェクト参照
 	public GameObject canvas; //キャンバス
 	public GameObject imageShield; //シールド
+	/*
+	public GameObject createEnemyAttack; //createEnemyAttack
+	public GameObject myAttack; //MyAttack
+	*/
 	
 	// Update is called once per frame
 	void Update () {
