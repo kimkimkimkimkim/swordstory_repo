@@ -27,7 +27,7 @@ public class EnemyAttack : MonoBehaviour {
 	}
 
 	//シールド成功した時
-	void OnCllisionEnter(Collision collision) {
+	void OnCollisionEnter2D (Collision2D collision) {
 		Debug.Log ("衝突");
 		if (Input.GetMouseButton (0)) {
 			Destroy (this.gameObject);
