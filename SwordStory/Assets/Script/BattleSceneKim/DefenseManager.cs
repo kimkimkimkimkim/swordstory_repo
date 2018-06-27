@@ -46,12 +46,4 @@ public class DefenseManager : MonoBehaviour {
 		}
 	}
 
-	//シールド成功した時
-	void OnCollisionEnter(Collision collision) {
-		Debug.Log ("衝突");
-		if (Input.GetMouseButton (0)) {
-			Debug.Log ("守備成功");
-		}
-	}
-
 }
