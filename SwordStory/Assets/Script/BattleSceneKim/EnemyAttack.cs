@@ -6,25 +6,16 @@ using UnityEngine.UI;
 public class EnemyAttack : MonoBehaviour {
 
 	//メンバ変数
+	private GameObject battleSceneManager; //BattleSceneKimManager
 	private GameObject imageDamage; //ダメージを食らった時に表示する赤い画像
 	private Animation anim; //ダメージを食らった時のアニメーショ
 	private float attackDicisionOn = 0.8f; //ColliderがOnし始めるScale
 	private float scaleMax = 1.0f;   //敵の攻撃の最大の大きさ
-	private GameObject sliderMyHp; //自分のHPスライダー
-	private GameObject textWinOrLoss; //勝敗テキスト
-	GameObject eneata;
-	GameObject defense;
-	GameObject ata;
-
 
 	// Use this for initialization
 	void Start () {
 
-		eneata = GameObject.Find ("CreateEnemyAttack");
-		defense = GameObject.Find ("DefenseManager");
-		//ata = GameObject.Find ("MyAttack");
-		textWinOrLoss = GameObject.Find ("TextWinOrLoss");
-		sliderMyHp = GameObject.Find ("SliderMyHP");
+		battleSceneManager = GameObject.Find ("BattleSceneKimManager");
 		imageDamage = GameObject.Find ("ImageDamageRed");
 		anim = imageDamage.GetComponent<Animation> ();
 
@@ -48,32 +39,19 @@ public class EnemyAttack : MonoBehaviour {
 
 	//シールド成功した時
 	void OnCollisionEnter2D (Collision2D collision) {
-		Debug.Log ("守備成功");
 		//守備成功の処理
 		Destroy(this.gameObject);
+
+		//必殺技ゲージ上昇
+		battleSceneManager.GetComponent<BattleSceneKimManager>().AscentSpecialMoveGauge(0.01f);
 	}
 
 
 	//敵の攻撃判定
 	void AnimationEnd(){
-		Debug.Log ("敵の攻撃成功");
 		//攻撃を食らう処理
 		anim.Play();
 		Destroy(this.gameObject);
-
-		//自分のHP減少
-		sliderMyHp.GetComponent<Slider> ().value -= 0.1f;
-
-		if (sliderMyHp.GetComponent<Slider> ().value <= 0) {
-			//負け処理
-			eneata.SetActive(false);
-			defense.SetActive (false);
-			//ata.SetActive (false);
-
-			//textWinOrLoss.SetActive (true);
-			textWinOrLoss.GetComponent<Text>().text = "Lose...";
-			textWinOrLoss.GetComponent<Text> ().color = Color.blue;
-
-		}
+		battleSceneManager.GetComponent<BattleSceneKimManager> ().PlayerReceiveAttack (0.1f);
 	}
 }

@@ -15,6 +15,7 @@ public class MyAttack : MonoBehaviour {
 	public GameObject sliderEnemyHp; //敵のHPスライダー
 	public GameObject textWinOrLoss; //勝敗テキスト
 	public GameObject textComment; //コメントテキスト
+	public GameObject battleSceneManager; //BattleSceneKimManager
 
 	//メンバ変数
 	private Vector3 touchStartPos; //タップし始めの位置
@@ -25,9 +26,8 @@ public class MyAttack : MonoBehaviour {
 
 	void Update()
 	{
-		seconds += Time.deltaTime;
+		//seconds += Time.deltaTime;
 		Flick ();
-		Debug.Log(seconds);
 		if (seconds >= maxTime) {
 			//敵の攻撃に移る
 			Debug.Log("敵のターン");
@@ -64,32 +64,8 @@ public class MyAttack : MonoBehaviour {
 
 		float rad = Mathf.Atan2 (directionY, directionX);
 		dig = rad * Mathf.Rad2Deg;
-		Debug.Log (dig);
 
-		/*
-		if (dig >= 0 && dig < 22.5) {
-			//右
-		}else if (dig >= 22.5 && dig < 67.5) {
-			//右上
-		}else if (dig >= 67.5 && dig < 112.5) {
-			//上
-		}else if (dig >= 112.5 && dig < 157.5) {
-			//左上
-		}else if (dig >= 157.5 && dig <= 180) {
-			//左
-		}else if (dig >= -22.5 && dig < 0) {
-			//右
-		}else if (dig >= -67.5 && dig < -22.5) {
-			//右下
-		}else if (dig >= -112.5 && dig < -67.5) {
-			//下
-		}else if (dig >= -157.5 && dig < -112.5) {
-			//左下
-		}else if (dig > -180 && dig < -157.5) {
-			//左
-		}
-		*/
-		if (directionX > 30 || directionY > 30) {
+		if (Mathf.Abs(directionX) > 30 || Mathf.Abs(directionY) > 30) {
 			Attack ();
 		}
 
@@ -124,18 +100,11 @@ public class MyAttack : MonoBehaviour {
 		imageEnemy.GetComponent<Animation>().Play();
 		imageDamage.GetComponent<Animation>().Play();
 
-		//敵のHP減少
-		sliderEnemyHp.GetComponent<Slider>().value -= 0.02f;
+		//必殺技ゲージ上昇
+		battleSceneManager.GetComponent<BattleSceneKimManager>().AscentSpecialMoveGauge(0.05f);
 
-		if (sliderEnemyHp.GetComponent<Slider> ().value <= 0) {
-			//勝ち処理
-			this.gameObject.SetActive(false);
-			createEnemyAttack.SetActive (false);
-			defenseManager.SetActive (false);
+		//敵にダメージを与える
+		battleSceneManager.GetComponent<BattleSceneKimManager> ().EnemyReceiveAttack (0.02f);
 
-			textWinOrLoss.SetActive (true);
-			textWinOrLoss.GetComponent<Text>().text = "WIN!!";
-			textWinOrLoss.GetComponent<Text> ().color = Color.red;
-		}
 	}
 }

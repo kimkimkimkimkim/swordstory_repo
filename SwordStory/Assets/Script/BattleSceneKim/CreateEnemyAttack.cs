@@ -12,9 +12,11 @@ public class CreateEnemyAttack : MonoBehaviour {
 	public GameObject defenseManager; //ディフェンス
 	public GameObject myAttack; //MyAttack
 	public GameObject textComment; //コメントテキスト
+	public GameObject battleSceneManager; //BattleSceneKimManager
 
 	//グローバル変数
 	public float timeOut; //敵の攻撃の時間間隔
+	public bool enableAttack = true; //攻撃ターンかどうか
 
 	//メンバ変数
 	private float timeElapsed; //時間を蓄積させる
@@ -27,8 +29,12 @@ public class CreateEnemyAttack : MonoBehaviour {
 	}
 
 	void Update() {
-		timeElapsed += Time.deltaTime;
 
+		if (enableAttack) {
+			timeElapsed += Time.deltaTime;
+		}
+
+		//指定した間隔（秒）で敵の攻撃生成
 		if(timeElapsed >= timeOut) {
 			// Do anything
 			EnemyAttack();
@@ -36,14 +42,16 @@ public class CreateEnemyAttack : MonoBehaviour {
 			counterAttack++;
 		}
 
+		//指定した回数攻撃したら敵が休憩
 		if (counterAttack >= maxAttackCount) {
 			//休憩に移る
 			Debug.Log("こっちのターン");
 			counterAttack = 0;
 			imageShield.SetActive(false);
-			this.gameObject.SetActive(false);
-			defenseManager.SetActive (false);
-			myAttack.SetActive (true);
+
+			//攻撃が終わったことを知らせる
+			battleSceneManager.GetComponent<BattleSceneKimManager>().EndEnemyAttack();
+			enableAttack = false;
 
 			textComment.GetComponent<Text>().text = "敵が疲れている！\n今のうちに攻撃だ！";
 		}
@@ -61,5 +69,6 @@ public class CreateEnemyAttack : MonoBehaviour {
 			0f);
 		attack.transform.SetSiblingIndex (4);
 	}
+
 
 }
