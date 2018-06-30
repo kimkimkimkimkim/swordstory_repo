@@ -20,6 +20,10 @@ public class BattleSceneKimManager : MonoBehaviour {
 	private float timeElapsed = 0.0f; //時間を蓄積させる
 	private bool isFinishedEnemyAttack = false; //敵の攻撃が終わったかどうか
 
+	void OnEnable(){
+		timeElapsed = timeEnemyBreak;
+	}
+
 	void Update(){
 		//敵が休憩に入ったら時間計測開始
 		if (isFinishedEnemyAttack) {
@@ -73,6 +77,7 @@ public class BattleSceneKimManager : MonoBehaviour {
 			textWinOrLoss.SetActive (true);
 			textWinOrLoss.GetComponent<Text>().text = "WIN!!";
 			textWinOrLoss.GetComponent<Text> ().color = Color.red;
+			
 		}
 
 	}

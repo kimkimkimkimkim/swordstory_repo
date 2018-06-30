@@ -28,6 +28,10 @@ public class CreateEnemyAttack : MonoBehaviour {
 		EnemyAttack ();
 	}
 
+	void OnEnable(){
+		timeElapsed = 0;
+	}
+
 	void Update() {
 
 		if (enableAttack) {
