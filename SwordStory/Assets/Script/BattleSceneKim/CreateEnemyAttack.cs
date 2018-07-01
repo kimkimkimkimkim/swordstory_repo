@@ -13,6 +13,7 @@ public class CreateEnemyAttack : MonoBehaviour {
 	public GameObject myAttack; //MyAttack
 	public GameObject textComment; //コメントテキスト
 	public GameObject battleSceneManager; //BattleSceneKimManager
+	public GameObject enemyAttackPatternCollection; //EnemyAttackPatternCollection
 
 	//グローバル変数
 	public float timeOut; //敵の攻撃の時間間隔
@@ -23,13 +24,30 @@ public class CreateEnemyAttack : MonoBehaviour {
 	private int counterAttack = 0; //攻撃した回数
 	private int maxAttackCount = 25; //休憩に移るまでの攻撃回数
 
+
 	// Use this for initialization
 	void Start () {
-		EnemyAttack ();
+		//EnemyAttack ();
+		StartCoroutine (ChoiceEnemyAttack (0.2f, 1));
+		StartCoroutine (ChoiceEnemyAttack (1.2f, 3));
+		StartCoroutine (ChoiceEnemyAttack (2.2f, 2));
+		StartCoroutine (ChoiceEnemyAttack (3.2f, 5));
+		StartCoroutine (ChoiceEnemyAttack (4.2f, 4));
+		StartCoroutine (ChoiceEnemyAttack (5.2f, 6));
+		StartCoroutine (ChoiceEnemyAttack (6.2f, 7));
+		StartCoroutine (ChoiceEnemyAttack (7.2f, 8));
 	}
 
 	void OnEnable(){
 		timeElapsed = 0;
+		StartCoroutine (ChoiceEnemyAttack (0.2f, 1));
+		StartCoroutine (ChoiceEnemyAttack (1.2f, 3));
+		StartCoroutine (ChoiceEnemyAttack (2.2f, 2));
+		StartCoroutine (ChoiceEnemyAttack (3.2f, 5));
+		StartCoroutine (ChoiceEnemyAttack (4.2f, 4));
+		StartCoroutine (ChoiceEnemyAttack (5.2f, 6));
+		StartCoroutine (ChoiceEnemyAttack (6.2f, 7));
+		StartCoroutine (ChoiceEnemyAttack (7.2f, 8));
 	}
 
 	void Update() {
@@ -40,8 +58,7 @@ public class CreateEnemyAttack : MonoBehaviour {
 
 		//指定した間隔（秒）で敵の攻撃生成
 		if(timeElapsed >= timeOut) {
-			// Do anything
-			EnemyAttack();
+			//EnemyAttack();
 			timeElapsed = 0.0f;
 			counterAttack++;
 		}
@@ -71,6 +88,41 @@ public class CreateEnemyAttack : MonoBehaviour {
 			UnityEngine.Random.Range (-350.0f, 800.0f),
 			0f);
 		attack.transform.SetSiblingIndex (4);
+	}
+
+	//攻撃を生成
+	IEnumerator ChoiceEnemyAttack(float delay, int num){
+		//delay秒待つ
+		yield return new WaitForSeconds(delay);
+		/*処理*/
+		switch (num) {
+		case 1:
+			enemyAttackPatternCollection.GetComponent<EnemyAttackPatternCollection> ().Vertical1 ();
+			break;
+		case 2:
+			enemyAttackPatternCollection.GetComponent<EnemyAttackPatternCollection>().Vertical2();
+			break;
+		case 3:
+			enemyAttackPatternCollection.GetComponent<EnemyAttackPatternCollection>().Vertical3();
+			break;
+		case 4:
+			enemyAttackPatternCollection.GetComponent<EnemyAttackPatternCollection>().Horizontal1();
+			break;
+		case 5:
+			enemyAttackPatternCollection.GetComponent<EnemyAttackPatternCollection>().Horizontal2();
+			break;
+		case 6:
+			enemyAttackPatternCollection.GetComponent<EnemyAttackPatternCollection>().Horizontal3();
+			break;
+		case 7:
+			enemyAttackPatternCollection.GetComponent<EnemyAttackPatternCollection>().BackSlash();
+			break;
+		case 8:
+			enemyAttackPatternCollection.GetComponent<EnemyAttackPatternCollection>().Slash();
+			break;
+		default:
+			break;
+		}
 	}
 
 

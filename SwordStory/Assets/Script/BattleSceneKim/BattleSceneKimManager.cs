@@ -18,6 +18,7 @@ public class BattleSceneKimManager : MonoBehaviour {
 	public GameObject imageShield; //シールド画像
 	public GameObject specialMoveManager; //SpecialMoveManager
 
+
 	//メンバ変数
 	private float timeEnemyBreak = 10.0f; //敵の休憩時間
 	private float timeElapsed = 0.0f; //時間を蓄積させる

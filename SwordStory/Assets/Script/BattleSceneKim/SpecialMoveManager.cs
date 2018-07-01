@@ -47,6 +47,7 @@ public class SpecialMoveManager : MonoBehaviour {
 	}
 
 	void OnEnable(){
+		imageEnemy.GetComponent<EnemyManager> ().RevertToInitPos ();
 		imageBack.SetActive (false);
 		imageShield.SetActive (false);
 		containerOrbImage.SetActive (true);
