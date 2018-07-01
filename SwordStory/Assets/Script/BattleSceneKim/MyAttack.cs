@@ -118,7 +118,7 @@ public class MyAttack : MonoBehaviour {
 		imageDamage.GetComponent<Animation>().Play();
 
 		//敵にダメージを与える
-		battleSceneManager.GetComponent<BattleSceneKimManager> ().EnemyReceiveAttack (0.02f);
+		battleSceneManager.GetComponent<BattleSceneKimManager> ().EnemyReceiveAttack (2);
 
 		//必殺技ゲージ上昇
 		battleSceneManager.GetComponent<BattleSceneKimManager>().AscentSpecialMoveGauge(0.05f);

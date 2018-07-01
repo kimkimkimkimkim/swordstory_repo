@@ -52,6 +52,6 @@ public class EnemyAttack : MonoBehaviour {
 		//攻撃を食らう処理
 		anim.Play();
 		Destroy(this.gameObject);
-		battleSceneManager.GetComponent<BattleSceneKimManager> ().PlayerReceiveAttack (0.1f);
+		battleSceneManager.GetComponent<BattleSceneKimManager> ().PlayerReceiveAttack (1);
 	}
 }

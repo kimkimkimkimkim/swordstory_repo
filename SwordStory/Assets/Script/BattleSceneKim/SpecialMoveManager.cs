@@ -104,7 +104,7 @@ public class SpecialMoveManager : MonoBehaviour {
 
 
 				//ダメージ計算
-				battleSceneManager.GetComponent<BattleSceneKimManager>().EnemyReceiveAttack(0.1f);
+				battleSceneManager.GetComponent<BattleSceneKimManager>().EnemyReceiveAttack(10);
 
 			}
 

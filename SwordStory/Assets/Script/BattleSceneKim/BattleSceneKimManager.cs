@@ -23,8 +23,8 @@ public class BattleSceneKimManager : MonoBehaviour {
 	private float timeElapsed = 0.0f; //時間を蓄積させる
 	private bool isFinishedEnemyAttack = false; //敵の攻撃が終わったかどうか
 	private bool isSpecialMove = false; //この攻撃で必殺技になるかどうか
-	private float enemyHp = 1; //敵のHP
-	private float playerHp = 1; //プレイヤーのHP
+	private int enemyHp = 100; //敵のHP
+	private int playerHp = 10; //プレイヤーのHP
 
 	void OnEnable(){
 		timeElapsed = timeEnemyBreak;
@@ -54,22 +54,23 @@ public class BattleSceneKimManager : MonoBehaviour {
 	}
 
 	//プレイヤーが攻撃を受ける
-	public void PlayerReceiveAttack(float damage){
+	public void PlayerReceiveAttack(int damage){
 		//自分のHP減少
 		Hashtable hash = new Hashtable(){
 			{"from", playerHp},
 			{"to", playerHp - damage},
 			{"time", 1f},
-			{"easeType",iTween.EaseType.linear},
+			{"easeType",iTween.EaseType.easeOutCubic},
 			{"loopType",iTween.LoopType.none},
 			{"onupdate", "OnUpdateMyHp"},
 			{"onupdatetarget", gameObject},
 		};
 		iTween.ValueTo(sliderEnemyHp, hash);
 		playerHp -= damage;
-
-		if (sliderMyHp.GetComponent<Slider> ().value <= 0) {
+		Debug.Log (playerHp);
+		if (playerHp <= 0) {
 			//負け処理
+			sliderMyHp.GetComponent<Slider> ().value = 0;
 			this.gameObject.SetActive(false);
 			createEnemyAttack.SetActive(false);
 			defenseManager.SetActive (false);
@@ -84,7 +85,7 @@ public class BattleSceneKimManager : MonoBehaviour {
 	}
 
 	//敵にダメージを与える
-	public void EnemyReceiveAttack(float damage){
+	public void EnemyReceiveAttack(int damage){
 		if (isSpecialMove) {
 			//必殺技発動
 			specialMoveManager.SetActive(true);
@@ -103,7 +104,7 @@ public class BattleSceneKimManager : MonoBehaviour {
 				{"from", enemyHp},
 				{"to", enemyHp - damage},
 				{"time", 1f},
-				{"easeType",iTween.EaseType.linear},
+				{"easeType",iTween.EaseType.easeOutCubic},
 				{"loopType",iTween.LoopType.none},
 				{"onupdate", "OnUpdateEnemyHp"},
 				{"onupdatetarget", gameObject},
@@ -112,8 +113,9 @@ public class BattleSceneKimManager : MonoBehaviour {
 			enemyHp -= damage;
 		}
 
-		if (sliderEnemyHp.GetComponent<Slider> ().value <= 0) {
+		if (enemyHp <= 0) {
 			//勝ち処理
+			sliderEnemyHp.GetComponent<Slider> ().value = 0;
 			this.gameObject.SetActive(false);
 			createEnemyAttack.SetActive (false);
 			defenseManager.SetActive (false);
