@@ -12,8 +12,9 @@ public class BattleSceneKimManager : MonoBehaviour {
 	public GameObject textWinOrLoss; //勝敗テキスト
 	public GameObject myAttack; //スクリプト
 	public GameObject defenseManager; //スクリプト
+	public GameObject imageEnemy; //敵画像
 	public GameObject imageSpecialMoveGauge; //必殺技ゲージ画像
-	public Sprite imageMaxSpecialMoveGauge; //必殺技ゲージが満タンになった時の画像
+	public Sprite[] spriteSpecialMoveGauge = new Sprite[2]; //必殺技ゲージが満タンになった時の画像
 	public GameObject imageShield; //シールド画像
 	public GameObject specialMoveManager; //SpecialMoveManager
 
@@ -39,7 +40,7 @@ public class BattleSceneKimManager : MonoBehaviour {
 			//敵の攻撃開始
 			isFinishedEnemyAttack = false;
 			createEnemyAttack.GetComponent<CreateEnemyAttack> ().enableAttack = true;
-
+			imageEnemy.GetComponent<EnemyManager> ().MoveEnemyImage ();
 
 		}
 	}
@@ -47,6 +48,7 @@ public class BattleSceneKimManager : MonoBehaviour {
 	//敵の攻撃ターンが終わったら受け取る
 	public void EndEnemyAttack(){
 		isFinishedEnemyAttack = true;
+		imageEnemy.GetComponent<EnemyManager> ().RevertToInitPos ();
 	}
 
 	//プレイヤーが攻撃を受ける
@@ -64,6 +66,7 @@ public class BattleSceneKimManager : MonoBehaviour {
 
 			textWinOrLoss.GetComponent<Text>().text = "Lose...";
 			textWinOrLoss.GetComponent<Text> ().color = Color.blue;
+			imageEnemy.GetComponent<EnemyManager> ().RevertToInitPos ();
 
 		}
 	}
@@ -81,6 +84,7 @@ public class BattleSceneKimManager : MonoBehaviour {
 			isSpecialMove = false;
 
 			imageSpecialMoveGauge.GetComponent<Image> ().fillAmount = 0.0f;
+			imageSpecialMoveGauge.GetComponent<Image>().sprite = spriteSpecialMoveGauge[0];
 		} else {
 			//敵のHP減少
 			sliderEnemyHp.GetComponent<Slider> ().value -= damage;
@@ -96,6 +100,7 @@ public class BattleSceneKimManager : MonoBehaviour {
 
 			textWinOrLoss.GetComponent<Text>().text = "WIN!!";
 			textWinOrLoss.GetComponent<Text> ().color = Color.red;
+			imageEnemy.GetComponent<EnemyManager> ().RevertToInitPos ();
 			
 		}
 
@@ -111,7 +116,7 @@ public class BattleSceneKimManager : MonoBehaviour {
 			isSpecialMove = true;
 
 			//必殺技ゲージの画像変更
-			imageSpecialMoveGauge.GetComponent<Image>().sprite = imageMaxSpecialMoveGauge;
+			imageSpecialMoveGauge.GetComponent<Image>().sprite = spriteSpecialMoveGauge[1];
 
 		}
 	}
