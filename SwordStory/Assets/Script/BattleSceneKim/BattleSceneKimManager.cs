@@ -13,6 +13,7 @@ public class BattleSceneKimManager : MonoBehaviour {
 	public GameObject myAttack; //スクリプト
 	public GameObject defenseManager; //スクリプト
 	public GameObject imageSpecialMoveGauge; //必殺技ゲージ画像
+	public GameObject imageShield; //シールド画像
 	public GameObject specialMoveManager; //SpecialMoveManager
 
 	//メンバ変数
@@ -53,9 +54,11 @@ public class BattleSceneKimManager : MonoBehaviour {
 
 		if (sliderMyHp.GetComponent<Slider> ().value <= 0) {
 			//負け処理
+			this.gameObject.SetActive(false);
 			createEnemyAttack.SetActive(false);
 			defenseManager.SetActive (false);
 			myAttack.SetActive (false);
+			imageShield.SetActive (false);
 
 			textWinOrLoss.GetComponent<Text>().text = "Lose...";
 			textWinOrLoss.GetComponent<Text> ().color = Color.blue;
@@ -73,8 +76,9 @@ public class BattleSceneKimManager : MonoBehaviour {
 			this.gameObject.SetActive(false);
 			createEnemyAttack.SetActive (false);
 			defenseManager.SetActive (false);
+			myAttack.SetActive (false);
+			imageShield.SetActive (false);
 
-			textWinOrLoss.SetActive (true);
 			textWinOrLoss.GetComponent<Text>().text = "WIN!!";
 			textWinOrLoss.GetComponent<Text> ().color = Color.red;
 			

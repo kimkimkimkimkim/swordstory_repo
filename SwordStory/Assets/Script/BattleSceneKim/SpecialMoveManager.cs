@@ -13,6 +13,7 @@ public class SpecialMoveManager : MonoBehaviour {
 	public GameObject textSpecialMove; //必殺技テキスト
 	public GameObject imageEnemy; //敵画像
 	public GameObject imageBackSpecialMove; //必殺技の時の背景
+	public GameObject imageShield; //シールド画像
 	public GameObject textBaku;
 	public GameObject textRetsu;
 	public GameObject textGiri;
@@ -40,12 +41,14 @@ public class SpecialMoveManager : MonoBehaviour {
 		initialTimingImagePos = imageTiming.transform.localPosition;
 		animSpecialMove = imageEnemy.GetComponent<Animation> ();
 		imageBack.SetActive (false);
+		imageShield.SetActive (false);
 		containerOrbImage.SetActive (true);
 		imageTiming.SetActive (true);
 	}
 
 	void OnEnable(){
 		imageBack.SetActive (false);
+		imageShield.SetActive (false);
 		containerOrbImage.SetActive (true);
 		imageTiming.SetActive (true);
 		for (int i = 0; i < 5; i++) {
