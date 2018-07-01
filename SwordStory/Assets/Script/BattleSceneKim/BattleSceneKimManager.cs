@@ -13,6 +13,7 @@ public class BattleSceneKimManager : MonoBehaviour {
 	public GameObject myAttack; //スクリプト
 	public GameObject defenseManager; //スクリプト
 	public GameObject imageSpecialMoveGauge; //必殺技ゲージ画像
+	public Sprite imageMaxSpecialMoveGauge; //必殺技ゲージが満タンになった時の画像
 	public GameObject imageShield; //シールド画像
 	public GameObject specialMoveManager; //SpecialMoveManager
 
@@ -20,6 +21,7 @@ public class BattleSceneKimManager : MonoBehaviour {
 	private float timeEnemyBreak = 10.0f; //敵の休憩時間
 	private float timeElapsed = 0.0f; //時間を蓄積させる
 	private bool isFinishedEnemyAttack = false; //敵の攻撃が終わったかどうか
+	private bool isSpecialMove = false; //この攻撃で必殺技になるかどうか
 
 	void OnEnable(){
 		timeElapsed = timeEnemyBreak;
@@ -68,8 +70,21 @@ public class BattleSceneKimManager : MonoBehaviour {
 
 	//敵にダメージを与える
 	public void EnemyReceiveAttack(float damage){
-		//敵のHP減少
-		sliderEnemyHp.GetComponent<Slider>().value -= damage;
+		if (isSpecialMove) {
+			//必殺技発動
+			specialMoveManager.SetActive(true);
+			createEnemyAttack.SetActive (false);
+			defenseManager.SetActive (false);
+			myAttack.SetActive (false);
+			this.gameObject.SetActive (false);
+
+			isSpecialMove = false;
+
+			imageSpecialMoveGauge.GetComponent<Image> ().fillAmount = 0.0f;
+		} else {
+			//敵のHP減少
+			sliderEnemyHp.GetComponent<Slider> ().value -= damage;
+		}
 
 		if (sliderEnemyHp.GetComponent<Slider> ().value <= 0) {
 			//勝ち処理
@@ -92,14 +107,12 @@ public class BattleSceneKimManager : MonoBehaviour {
 		imageSpecialMoveGauge.GetComponent<Image> ().fillAmount += quantity;
 
 		if (imageSpecialMoveGauge.GetComponent<Image> ().fillAmount >= 1.0f) {
-			//必殺技発動
-			specialMoveManager.SetActive(true);
-			createEnemyAttack.SetActive (false);
-			defenseManager.SetActive (false);
-			myAttack.SetActive (false);
-			this.gameObject.SetActive (false);
+			//必殺技発動可能
+			isSpecialMove = true;
 
-			imageSpecialMoveGauge.GetComponent<Image> ().fillAmount = 0.0f;
+			//必殺技ゲージの画像変更
+			imageSpecialMoveGauge.GetComponent<Image>().sprite = imageMaxSpecialMoveGauge;
+
 		}
 	}
 

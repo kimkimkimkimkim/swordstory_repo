@@ -245,6 +245,7 @@ MonoBehaviour:
   textSpecialMove: {fileID: 1066594328}
   imageEnemy: {fileID: 1770842682}
   imageBackSpecialMove: {fileID: 254253877}
+  imageShield: {fileID: 1899708813}
   textBaku: {fileID: 294381518}
   textRetsu: {fileID: 40933659}
   textGiri: {fileID: 1155868091}
@@ -1955,6 +1956,7 @@ MonoBehaviour:
   myAttack: {fileID: 287098162}
   defenseManager: {fileID: 1345730828}
   imageSpecialMoveGauge: {fileID: 1752730029}
+  imageShield: {fileID: 1899708813}
   specialMoveManager: {fileID: 95534362}
 --- !u!4 &1259690786
 Transform:
