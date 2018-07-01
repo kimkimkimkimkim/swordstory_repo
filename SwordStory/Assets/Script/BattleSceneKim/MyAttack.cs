@@ -31,7 +31,6 @@ public class MyAttack : MonoBehaviour {
 		Flick ();
 		if (seconds >= maxTime) {
 			//敵の攻撃に移る
-			Debug.Log("敵のターン");
 			seconds = 0;
 			this.gameObject.SetActive (false);
 			createEnemyAttack.SetActive (true);

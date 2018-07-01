@@ -49,7 +49,6 @@ public class CreateEnemyAttack : MonoBehaviour {
 		//指定した回数攻撃したら敵が休憩
 		if (counterAttack >= maxAttackCount) {
 			//休憩に移る
-			Debug.Log("こっちのターン");
 			counterAttack = 0;
 			imageShield.SetActive(false);
 

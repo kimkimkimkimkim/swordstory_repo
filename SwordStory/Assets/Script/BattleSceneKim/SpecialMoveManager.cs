@@ -64,7 +64,6 @@ public class SpecialMoveManager : MonoBehaviour {
 		//タイミング画像の移動
 		imageTiming.transform.position += new Vector3(speedTimingImage, 0.0f);
 		if(imageTiming.transform.position.x >= 3.0f){
-			Debug.Log ("コマンド終了");
 			//必殺技コマンド終了
 			timeElapsed += Time.deltaTime;
 			//背景を黒に変更

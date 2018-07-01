@@ -23,6 +23,8 @@ public class BattleSceneKimManager : MonoBehaviour {
 	private float timeElapsed = 0.0f; //時間を蓄積させる
 	private bool isFinishedEnemyAttack = false; //敵の攻撃が終わったかどうか
 	private bool isSpecialMove = false; //この攻撃で必殺技になるかどうか
+	private float enemyHp = 1; //敵のHP
+	private float playerHp = 1; //プレイヤーのHP
 
 	void OnEnable(){
 		timeElapsed = timeEnemyBreak;
@@ -54,7 +56,17 @@ public class BattleSceneKimManager : MonoBehaviour {
 	//プレイヤーが攻撃を受ける
 	public void PlayerReceiveAttack(float damage){
 		//自分のHP減少
-		sliderMyHp.GetComponent<Slider> ().value -= damage;
+		Hashtable hash = new Hashtable(){
+			{"from", playerHp},
+			{"to", playerHp - damage},
+			{"time", 1f},
+			{"easeType",iTween.EaseType.linear},
+			{"loopType",iTween.LoopType.none},
+			{"onupdate", "OnUpdateMyHp"},
+			{"onupdatetarget", gameObject},
+		};
+		iTween.ValueTo(sliderEnemyHp, hash);
+		playerHp -= damage;
 
 		if (sliderMyHp.GetComponent<Slider> ().value <= 0) {
 			//負け処理
@@ -87,7 +99,17 @@ public class BattleSceneKimManager : MonoBehaviour {
 			imageSpecialMoveGauge.GetComponent<Image>().sprite = spriteSpecialMoveGauge[0];
 		} else {
 			//敵のHP減少
-			sliderEnemyHp.GetComponent<Slider> ().value -= damage;
+			Hashtable hash = new Hashtable(){
+				{"from", enemyHp},
+				{"to", enemyHp - damage},
+				{"time", 1f},
+				{"easeType",iTween.EaseType.linear},
+				{"loopType",iTween.LoopType.none},
+				{"onupdate", "OnUpdateEnemyHp"},
+				{"onupdatetarget", gameObject},
+			};
+			iTween.ValueTo(sliderEnemyHp, hash);
+			enemyHp -= damage;
 		}
 
 		if (sliderEnemyHp.GetComponent<Slider> ().value <= 0) {
@@ -119,6 +141,16 @@ public class BattleSceneKimManager : MonoBehaviour {
 			imageSpecialMoveGauge.GetComponent<Image>().sprite = spriteSpecialMoveGauge[1];
 
 		}
+	}
+
+	//敵のHPを減少させる
+	void OnUpdateEnemyHp(float value){
+		sliderEnemyHp.GetComponent<Slider> ().value = value;
+	}
+
+	//自分のHPを減少させる
+	void OnUpdateMyHp(float value){
+		sliderMyHp.GetComponent<Slider> ().value = value;
 	}
 
 }
