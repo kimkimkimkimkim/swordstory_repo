@@ -2214,6 +2214,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 8060fabc6391c4f7ab6a7cee0cc10b9a, type: 3}
   imageShield: {fileID: 1899708813}
   specialMoveManager: {fileID: 95534362}
+  parameterTable: {fileID: 11400000, guid: efc048079682141e1bf5f9924f2b7f8e, type: 2}
 --- !u!4 &1259690786
 Transform:
   m_ObjectHideFlags: 0
@@ -2968,8 +2969,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.4986, y: 382.7}
-  m_SizeDelta: {x: 1370.7, y: 642.5}
+  m_AnchoredPosition: {x: 0, y: 460}
+  m_SizeDelta: {x: 1280, y: 600}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1770842684
 MonoBehaviour:

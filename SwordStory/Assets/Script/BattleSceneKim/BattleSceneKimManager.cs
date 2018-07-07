@@ -17,7 +17,7 @@ public class BattleSceneKimManager : MonoBehaviour {
 	public Sprite[] spriteSpecialMoveGauge = new Sprite[2]; //必殺技ゲージが満タンになった時の画像
 	public GameObject imageShield; //シールド画像
 	public GameObject specialMoveManager; //SpecialMoveManager
-
+	public ParameterTable parameterTable; //ScriptableObjectを継承したクラス
 
 	//メンバ変数
 	private float timeEnemyBreak = 10.0f; //敵の休憩時間
@@ -26,6 +26,12 @@ public class BattleSceneKimManager : MonoBehaviour {
 	private bool isSpecialMove = false; //この攻撃で必殺技になるかどうか
 	private int enemyHp = 100; //敵のHP
 	private int playerHp = 10; //プレイヤーのHP
+	private EnemyStatusData enemyStatusData; //敵のステータス情報が入ったクラス
+
+	void Start(){
+		enemyStatusData = parameterTable.EnemyStatusList [0]; //リストの0番目（闇ピヨ）のステータスを保持
+		EnemyInit(1);
+	}
 
 	void OnEnable(){
 		timeElapsed = timeEnemyBreak;
@@ -154,6 +160,23 @@ public class BattleSceneKimManager : MonoBehaviour {
 	//自分のHPを減少させる
 	void OnUpdateMyHp(float value){
 		sliderMyHp.GetComponent<Slider> ().value = value;
+	}
+
+	//敵の初期設定を行う
+	void EnemyInit(int num){
+
+		//num番目のモンスター情報をenemyStatusData
+		enemyStatusData = parameterTable.EnemyStatusList [num];
+
+		//画像の設定
+		imageEnemy.GetComponent<Image>().sprite = enemyStatusData.image; //画像を設定
+		imageEnemy.GetComponent<RectTransform>().sizeDelta = enemyStatusData.size; //画像のサイズ
+		imageEnemy.transform.localPosition = enemyStatusData.posi; //画像の位置
+
+		//敵のステータスの設定
+		enemyHp = enemyStatusData.hp; //HPを保存
+		sliderEnemyHp.GetComponent<Slider>().maxValue = enemyStatusData.hp; //敵のHPスライダーの最大値を設定
+
 	}
 
 }
