@@ -120,11 +120,16 @@ public class BattleSceneKimManager : MonoBehaviour {
 				{"onupdate", "OnUpdateEnemyHp"},
 				{"onupdatetarget", gameObject},
 			};
-			iTween.ValueTo(sliderEnemyHp, hash);
 			enemyHp -= damage;
+			if (enemyHp > 0) {
+				iTween.ValueTo (sliderEnemyHp, hash);
+			}
+
 		}
 
 		if (enemyHp <= 0) {
+
+			sliderEnemyHp.GetComponent<Slider> ().value = 0;
 
 			if (stageNum != 2) {
 
@@ -134,7 +139,6 @@ public class BattleSceneKimManager : MonoBehaviour {
 			} else {
 
 				//勝ち処理
-				sliderEnemyHp.GetComponent<Slider> ().value = 0;
 				this.gameObject.SetActive (false);
 				createEnemyAttack.SetActive (false);
 				defenseManager.SetActive (false);
@@ -191,6 +195,7 @@ public class BattleSceneKimManager : MonoBehaviour {
 		enemyHp = enemyStatusData.hp; //HPを保存
 		sliderEnemyHp.GetComponent<Slider>().maxValue = enemyStatusData.hp; //敵のHPスライダーの最大値を設定
 		sliderEnemyHp.GetComponent<Slider>().value = enemyStatusData.hp; //敵のHPスライダーの値も変更
+
 
 		//敵の攻撃を生成
 		createEnemyAttack.GetComponent<CreateEnemyAttack>().GenerateEnemyAttack(enemyStatusData.enemyAttackPatternList);

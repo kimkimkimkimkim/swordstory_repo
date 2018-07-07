@@ -29,4 +29,5 @@ public class EnemyAttackPattern{
 
 	public float timing; //技を出す時間（秒）
 	public int attackType; //技の種類
+
 }
