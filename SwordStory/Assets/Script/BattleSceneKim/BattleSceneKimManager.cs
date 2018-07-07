@@ -27,12 +27,15 @@ public class BattleSceneKimManager : MonoBehaviour {
 	private int enemyHp = 100; //敵のHP
 	private int playerHp = 10; //プレイヤーのHP
 	private EnemyStatusData enemyStatusData; //敵のステータス情報が入ったクラス
+	private int stageNum = 0;
+
 
 	void Start(){
-		enemyStatusData = parameterTable.EnemyStatusList [0]; //リストの0番目（闇ピヨ）のステータスを保持
-		EnemyInit(1);
+		//敵の生成
+		EnemyInit(0);
 	}
 
+	/*
 	void OnEnable(){
 		timeElapsed = timeEnemyBreak;
 	}
@@ -59,32 +62,33 @@ public class BattleSceneKimManager : MonoBehaviour {
 		isFinishedEnemyAttack = true;
 		imageEnemy.GetComponent<EnemyManager> ().RevertToInitPos ();
 	}
+	*/
 
 	//プレイヤーが攻撃を受ける
 	public void PlayerReceiveAttack(int damage){
 		//自分のHP減少
-		Hashtable hash = new Hashtable(){
-			{"from", playerHp},
-			{"to", playerHp - damage},
-			{"time", 1f},
-			{"easeType",iTween.EaseType.easeOutCubic},
-			{"loopType",iTween.LoopType.none},
-			{"onupdate", "OnUpdateMyHp"},
-			{"onupdatetarget", gameObject},
+		Hashtable hash = new Hashtable () {
+			{ "from", playerHp },
+			{ "to", playerHp - damage },
+			{ "time", 1f },
+			{ "easeType",iTween.EaseType.easeOutCubic },
+			{ "loopType",iTween.LoopType.none },
+			{ "onupdate", "OnUpdateMyHp" },
+			{ "onupdatetarget", gameObject },
 		};
-		iTween.ValueTo(sliderEnemyHp, hash);
+		iTween.ValueTo (sliderEnemyHp, hash);
 		playerHp -= damage;
 		Debug.Log (playerHp);
 		if (playerHp <= 0) {
 			//負け処理
 			sliderMyHp.GetComponent<Slider> ().value = 0;
-			this.gameObject.SetActive(false);
-			createEnemyAttack.SetActive(false);
+			this.gameObject.SetActive (false);
+			createEnemyAttack.SetActive (false);
 			defenseManager.SetActive (false);
 			myAttack.SetActive (false);
 			imageShield.SetActive (false);
 
-			textWinOrLoss.GetComponent<Text>().text = "Lose...";
+			textWinOrLoss.GetComponent<Text> ().text = "Lose...";
 			textWinOrLoss.GetComponent<Text> ().color = Color.blue;
 			imageEnemy.GetComponent<EnemyManager> ().RevertToInitPos ();
 
@@ -121,17 +125,27 @@ public class BattleSceneKimManager : MonoBehaviour {
 		}
 
 		if (enemyHp <= 0) {
-			//勝ち処理
-			sliderEnemyHp.GetComponent<Slider> ().value = 0;
-			this.gameObject.SetActive(false);
-			createEnemyAttack.SetActive (false);
-			defenseManager.SetActive (false);
-			myAttack.SetActive (false);
-			imageShield.SetActive (false);
 
-			textWinOrLoss.GetComponent<Text>().text = "WIN!!";
-			textWinOrLoss.GetComponent<Text> ().color = Color.red;
-			imageEnemy.GetComponent<EnemyManager> ().RevertToInitPos ();
+			if (stageNum != 2) {
+
+				stageNum++;
+				EnemyInit (stageNum);
+
+			} else {
+
+				//勝ち処理
+				sliderEnemyHp.GetComponent<Slider> ().value = 0;
+				this.gameObject.SetActive (false);
+				createEnemyAttack.SetActive (false);
+				defenseManager.SetActive (false);
+				myAttack.SetActive (false);
+				imageShield.SetActive (false);
+
+				textWinOrLoss.GetComponent<Text> ().text = "WIN!!";
+				textWinOrLoss.GetComponent<Text> ().color = Color.red;
+				imageEnemy.GetComponent<EnemyManager> ().RevertToInitPos ();
+
+			}
 			
 		}
 
@@ -176,7 +190,10 @@ public class BattleSceneKimManager : MonoBehaviour {
 		//敵のステータスの設定
 		enemyHp = enemyStatusData.hp; //HPを保存
 		sliderEnemyHp.GetComponent<Slider>().maxValue = enemyStatusData.hp; //敵のHPスライダーの最大値を設定
+		sliderEnemyHp.GetComponent<Slider>().value = enemyStatusData.hp; //敵のHPスライダーの値も変更
 
+		//敵の攻撃を生成
+		createEnemyAttack.GetComponent<CreateEnemyAttack>().GenerateEnemyAttack(enemyStatusData.enemyAttackPatternList);
 	}
 
 }

@@ -27,29 +27,29 @@ public class CreateEnemyAttack : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		//EnemyAttack ();
-		StartCoroutine (ChoiceEnemyAttack (0.2f, 1));
-		StartCoroutine (ChoiceEnemyAttack (1.2f, 3));
-		StartCoroutine (ChoiceEnemyAttack (2.2f, 2));
-		StartCoroutine (ChoiceEnemyAttack (3.2f, 5));
-		StartCoroutine (ChoiceEnemyAttack (4.2f, 4));
-		StartCoroutine (ChoiceEnemyAttack (5.2f, 6));
-		StartCoroutine (ChoiceEnemyAttack (6.2f, 7));
-		StartCoroutine (ChoiceEnemyAttack (7.2f, 8));
+		
 	}
 
 	void OnEnable(){
-		timeElapsed = 0;
-		StartCoroutine (ChoiceEnemyAttack (0.2f, 1));
-		StartCoroutine (ChoiceEnemyAttack (1.2f, 3));
-		StartCoroutine (ChoiceEnemyAttack (2.2f, 2));
-		StartCoroutine (ChoiceEnemyAttack (3.2f, 5));
-		StartCoroutine (ChoiceEnemyAttack (4.2f, 4));
-		StartCoroutine (ChoiceEnemyAttack (5.2f, 6));
-		StartCoroutine (ChoiceEnemyAttack (6.2f, 7));
-		StartCoroutine (ChoiceEnemyAttack (7.2f, 8));
+		
 	}
 
+	//敵の攻撃を生成
+	public void GenerateEnemyAttack(List<EnemyAttackPattern> list){
+
+		//変数宣言
+		int listLen = list.Count;
+
+		//技を生成
+		for (int i = 0; i < listLen; i++) {
+			Debug.Log ("list[" + i + "].timing = " + list[i].timing + " , " 
+				+ "list[" + i + "].attackType = " + list[i].attackType);
+			StartCoroutine (ChoiceEnemyAttack (list[i].timing, list[i].attackType));
+		}
+
+	}
+
+	/*
 	void Update() {
 
 		if (enableAttack) {
@@ -77,8 +77,10 @@ public class CreateEnemyAttack : MonoBehaviour {
 		}
 
 	}
+	*/
 
 
+	/*
 	//敵の攻撃
 	void EnemyAttack(){
 		GameObject attack = (GameObject)Instantiate (prefabEnemyAttack);
@@ -89,9 +91,11 @@ public class CreateEnemyAttack : MonoBehaviour {
 			0f);
 		attack.transform.SetSiblingIndex (4);
 	}
+	*/
 
 	//攻撃を生成
-	IEnumerator ChoiceEnemyAttack(float delay, int num){
+	IEnumerator ChoiceEnemyAttack(float delay, int num)
+	{
 		//delay秒待つ
 		yield return new WaitForSeconds(delay);
 		/*処理*/
