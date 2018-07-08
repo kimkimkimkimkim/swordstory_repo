@@ -2214,7 +2214,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 8060fabc6391c4f7ab6a7cee0cc10b9a, type: 3}
   imageShield: {fileID: 1899708813}
   specialMoveManager: {fileID: 95534362}
-  parameterTable: {fileID: 11400000, guid: efc048079682141e1bf5f9924f2b7f8e, type: 2}
+  parameterTable: {fileID: 11400000, guid: a2bb62cd4403d49c487143f2bbb4c86e, type: 2}
 --- !u!4 &1259690786
 Transform:
   m_ObjectHideFlags: 0

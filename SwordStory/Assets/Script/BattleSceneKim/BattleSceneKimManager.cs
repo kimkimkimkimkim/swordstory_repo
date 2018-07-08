@@ -17,7 +17,7 @@ public class BattleSceneKimManager : MonoBehaviour {
 	public Sprite[] spriteSpecialMoveGauge = new Sprite[2]; //必殺技ゲージが満タンになった時の画像
 	public GameObject imageShield; //シールド画像
 	public GameObject specialMoveManager; //SpecialMoveManager
-	public ParameterTable parameterTable; //ScriptableObjectを継承したクラス
+	public ParameterTable parameterTable; //ParameterTable
 
 	//メンバ変数
 	private float timeEnemyBreak = 10.0f; //敵の休憩時間
@@ -27,10 +27,12 @@ public class BattleSceneKimManager : MonoBehaviour {
 	private int enemyHp = 100; //敵のHP
 	private int playerHp = 10; //プレイヤーのHP
 	private EnemyStatusData enemyStatusData; //敵のステータス情報が入ったクラス
+
 	private int stageNum = 0;
 
 
 	void Start(){
+
 		//敵の生成
 		EnemyInit(0);
 	}
