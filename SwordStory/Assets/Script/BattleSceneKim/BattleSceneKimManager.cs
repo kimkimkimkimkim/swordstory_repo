@@ -18,6 +18,8 @@ public class BattleSceneKimManager : MonoBehaviour {
 	public GameObject imageShield; //シールド画像
 	public GameObject specialMoveManager; //SpecialMoveManager
 	public ParameterTable parameterTable; //ParameterTable
+	public GameObject textEnemyName; //勝負開始の時に最初に敵の名前を表示するテキスト
+	public GameObject[] imagePillar = new GameObject[10]; //脇の柱
 
 	//メンバ変数
 	private float timeEnemyBreak = 10.0f; //敵の休憩時間
@@ -34,7 +36,15 @@ public class BattleSceneKimManager : MonoBehaviour {
 	void Start(){
 
 		//敵の生成
-		EnemyInit(0);
+		//EnemyInit(0);
+
+		//goForward ();
+	}
+
+	void Update(){
+		if (Input.GetKey (KeyCode.Space)) {
+			goForward();
+		}
 	}
 
 	/*
@@ -131,11 +141,14 @@ public class BattleSceneKimManager : MonoBehaviour {
 
 		if (enemyHp <= 0) {
 
+			//スライダーの値を0にしてactiveをfalseにする
 			sliderEnemyHp.GetComponent<Slider> ().value = 0;
+			sliderEnemyHp.SetActive (false);
 
 			if (stageNum != 2) {
 
 				stageNum++;
+				goForward ();
 				EnemyInit (stageNum);
 
 			} else {
@@ -188,6 +201,10 @@ public class BattleSceneKimManager : MonoBehaviour {
 		//num番目のモンスター情報をenemyStatusData
 		enemyStatusData = parameterTable.EnemyStatusList [num];
 
+		//enemyNameテキストを表示
+		textEnemyName.GetComponent<Text>().text = "-VS-\n" + enemyStatusData.name;
+		textEnemyName.SetActive(true);
+
 		//画像の設定
 		imageEnemy.GetComponent<Image>().sprite = enemyStatusData.image; //画像を設定
 		imageEnemy.GetComponent<RectTransform>().sizeDelta = enemyStatusData.size; //画像のサイズ
@@ -195,12 +212,116 @@ public class BattleSceneKimManager : MonoBehaviour {
 
 		//敵のステータスの設定
 		enemyHp = enemyStatusData.hp; //HPを保存
+		sliderEnemyHp.SetActive(true); //activeをtrueに
+		iTween.ValueTo (sliderEnemyHp, iTween.Hash("from",0,"to",enemyStatusData.hp,"time",2,
+			"onupdate","OnUpdateEnemyHp","onupdatetarget", gameObject,"easeType",iTween.EaseType.linear));
 		sliderEnemyHp.GetComponent<Slider>().maxValue = enemyStatusData.hp; //敵のHPスライダーの最大値を設定
-		sliderEnemyHp.GetComponent<Slider>().value = enemyStatusData.hp; //敵のHPスライダーの値も変更
 
 
-		//敵の攻撃を生成
-		createEnemyAttack.GetComponent<CreateEnemyAttack>().GenerateEnemyAttack(enemyStatusData.enemyAttackPatternList);
+		//delay秒後にStartBattleを呼ぶ
+		StartCoroutine (StartBattle (2, num));
+
 	}
+
+	/// <summary>
+	/// 敵の攻撃が始まる
+	/// </summary>
+	/// <param name="delay">何秒遅延させるか</param>
+	/// <param name="num">EnemyStatudDataの何番目のキャラか</param>
+	IEnumerator StartBattle(float delay, int num){
+
+		//delay秒待つ
+		yield return new WaitForSeconds(delay);
+
+		/*処理*/
+		//攻撃生成
+		createEnemyAttack.GetComponent<CreateEnemyAttack>().GenerateEnemyAttack(enemyStatusData.enemyAttackPatternList);
+
+		//textEnemyNameを非表示に
+		textEnemyName.SetActive(false);
+
+	}
+
+	void goForward(){
+
+		for (int i = 0; i < 10; i++) {
+
+			//変数宣言
+			float posX = imagePillar [i].transform.localPosition.x;
+			float posY = imagePillar [i].transform.localPosition.x;
+			float width = imagePillar [i].GetComponent<RectTransform> ().sizeDelta.x;
+			float height = imagePillar [i].GetComponent<RectTransform> ().sizeDelta.y;
+			float time = 3f;
+
+
+			switch ((int)posX) {
+			case -368:
+				iTween.MoveTo (imagePillar [i].gameObject, 
+					iTween.Hash ("position", new Vector3 (-450.0f, 515.0f, 0.0f),
+						"isLocal",true,"time",time,"EaseType",iTween.EaseType.linear));
+				iTween.ScaleTo (imagePillar [i].gameObject,
+					iTween.Hash ("x", 0.34, "y", 0.34,"time",time,"EaseType",iTween.EaseType.linear));
+				break;
+			case 368:
+				iTween.MoveTo (imagePillar [i].gameObject, 
+					iTween.Hash ("position", new Vector3 (450.0f, 515.0f, 0.0f),"isLocal",true,"time",time,"EaseType",iTween.EaseType.linear));
+				iTween.ScaleTo (imagePillar [i].gameObject,
+					iTween.Hash ("x", 0.34, "y", 0.34,"time",time,"EaseType",iTween.EaseType.linear));
+				break;
+			case -450:
+				iTween.MoveTo (imagePillar [i].gameObject, 
+					iTween.Hash ("position", new Vector3 (-551.0f, 272.0f, 0.0f),"isLocal",true,"time",time,"EaseType",iTween.EaseType.linear));
+				iTween.ScaleTo (imagePillar [i].gameObject,
+					iTween.Hash ("x", 0.7, "y", 0.7,"time",time,"EaseType",iTween.EaseType.linear));
+				break;
+			case 450:
+				iTween.MoveTo (imagePillar [i].gameObject, 
+					iTween.Hash ("position", new Vector3 (551.0f, 272.0f, 0.0f),"isLocal",true,"time",time,"EaseType",iTween.EaseType.linear));
+				iTween.ScaleTo (imagePillar [i].gameObject,
+					iTween.Hash ("x", 0.7, "y", 0.7,"time",time,"EaseType",iTween.EaseType.linear));
+				break;
+			case -551:
+				iTween.MoveTo (imagePillar [i].gameObject, 
+					iTween.Hash ("position", new Vector3 (-735.0f, -46.0f, 0.0f),"isLocal",true,"time",time,"EaseType",iTween.EaseType.linear));
+				iTween.ScaleTo (imagePillar [i].gameObject,
+					iTween.Hash ("x", 1, "y", 1,"time",time,"EaseType",iTween.EaseType.linear));
+				break;
+			case 551:
+				iTween.MoveTo (imagePillar [i].gameObject, 
+					iTween.Hash ("position", new Vector3 (735.0f, -46.0f, 0.0f),"isLocal",true,"time",time,"EaseType",iTween.EaseType.linear));
+				iTween.ScaleTo (imagePillar [i].gameObject,
+					iTween.Hash ("x", 1, "y", 1,"time",time,"EaseType",iTween.EaseType.linear));
+				break;
+			case -735:
+				iTween.MoveTo (imagePillar [i].gameObject, 
+					iTween.Hash ("position", new Vector3 (-1063.0f, -527.0f, 0.0f),"isLocal",true,"time",time,"EaseType",iTween.EaseType.linear));
+				iTween.ScaleTo (imagePillar [i].gameObject,
+					iTween.Hash ("x", 1.4, "y", 1.4,"time",time,"EaseType",iTween.EaseType.linear));
+				break;
+			case 735:
+				iTween.MoveTo (imagePillar [i].gameObject, 
+					iTween.Hash ("position", new Vector3 (1063.0f, -527.0f, 0.0f),"isLocal",true,"time",time,"EaseType",iTween.EaseType.linear));
+				iTween.ScaleTo (imagePillar [i].gameObject,
+					iTween.Hash ("x", 1.4, "y", 1.4,"time",time,"EaseType",iTween.EaseType.linear));
+				break;
+			case -1063:
+				imagePillar [i].transform.localPosition = new Vector3 (-368.0f, 667.0f, 0.0f);
+				imagePillar [i].transform.localScale = new Vector3 (0.06f, 0.06f, 1f); 
+				break;
+			case 1063:
+				imagePillar [i].transform.localPosition = new Vector3 (368.0f, 667.0f, 0.0f);
+				imagePillar [i].transform.localScale = new Vector3 (0.06f, 0.06f, 1f); 
+				break;
+			}
+
+		}
+
+
+
+
+	}
+
+
+
 
 }

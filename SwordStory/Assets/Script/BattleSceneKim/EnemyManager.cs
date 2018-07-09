@@ -21,8 +21,10 @@ public class EnemyManager : MonoBehaviour {
 		path[5] = new Vector3(initMyPos.x + 2f * factor,initMyPos.y              ,initMyPos.z);
 		path[6] = new Vector3(initMyPos.x + 1f * factor,initMyPos.y + 1f * factor,initMyPos.z);
 		path[7] = new Vector3(initMyPos.x              ,initMyPos.y              ,initMyPos.z);
+		/*
 		iTween.MoveTo(this.gameObject,iTween.Hash("path",path,"time",4,
 			"easetype",iTween.EaseType.linear,"looptype",iTween.LoopType.loop));
+			*/
 	}
 
 	//敵画像を初期位置に戻す
