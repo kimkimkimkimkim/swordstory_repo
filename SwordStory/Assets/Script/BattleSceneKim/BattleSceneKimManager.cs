@@ -19,7 +19,7 @@ public class BattleSceneKimManager : MonoBehaviour {
 	public GameObject specialMoveManager; //SpecialMoveManager
 	public ParameterTable parameterTable; //ParameterTable
 	public GameObject textEnemyName; //勝負開始の時に最初に敵の名前を表示するテキスト
-	public GameObject[] imagePillar = new GameObject[10]; //脇の柱
+	public GameObject nextStageAnimation; //NextStageAnimation
 
 	//メンバ変数
 	private float timeEnemyBreak = 10.0f; //敵の休憩時間
@@ -36,15 +36,14 @@ public class BattleSceneKimManager : MonoBehaviour {
 	void Start(){
 
 		//敵の生成
-		//EnemyInit(0);
+		StartCoroutine (EnemyInit(0, 0));
 
-		//goForward ();
 	}
 
-	void Update(){
-		if (Input.GetKey (KeyCode.Space)) {
-			goForward();
-		}
+	//休憩して終わったら攻撃開始
+	public void intoRestTime(int num){
+		//delayは休憩時間
+		StartCoroutine (StartBattle(5,num));
 	}
 
 	/*
@@ -141,15 +140,19 @@ public class BattleSceneKimManager : MonoBehaviour {
 
 		if (enemyHp <= 0) {
 
-			//スライダーの値を0にしてactiveをfalseにする
+			//スライダーの値を0にする
 			sliderEnemyHp.GetComponent<Slider> ().value = 0;
-			sliderEnemyHp.SetActive (false);
 
 			if (stageNum != 2) {
 
+				//画面操作不可能にする
+				MakeDisable();
+
 				stageNum++;
-				goForward ();
-				EnemyInit (stageNum);
+				iTween.ValueTo(imageEnemy, iTween.Hash("from",1f, "to",0f,"time",1.5f,
+					"onupdate","OnUpdateEnemyImageColor","onupdatetarget",gameObject,
+					"oncomplete","UndoEnemyImageColor","oncompletetarget",gameObject));
+				StartCoroutine (EnemyInit (1.5f, stageNum));
 
 			} else {
 
@@ -195,31 +198,56 @@ public class BattleSceneKimManager : MonoBehaviour {
 		sliderMyHp.GetComponent<Slider> ().value = value;
 	}
 
-	//敵の初期設定を行う
-	void EnemyInit(int num){
+	//敵画像の色の変更
+	void OnUpdateEnemyImageColor(float alfa){
+		imageEnemy.GetComponent<Image> ().color = new Color (1f, 1f, 1f, alfa);
+	}
 
+	//敵画像の色を元に戻す
+	void UndoEnemyImageColor(){
+		imageEnemy.GetComponent<Image> ().color = new Color (1f, 1f, 1f, 1f);
+	}
+
+	//画面操作を不可能にする
+	void MakeDisable(){
+		myAttack.SetActive (false);
+		defenseManager.SetActive (false);
+	}
+
+	//画面操作を可能にする
+	void MakeAble(){
+		myAttack.SetActive (true);
+		defenseManager.SetActive (true);
+	}
+
+	//敵の初期設定を行う
+	IEnumerator EnemyInit(float delay, int num){
+
+		//delay秒待つ
+		yield return new WaitForSeconds(delay);
+
+		/*処理*/
 		//num番目のモンスター情報をenemyStatusData
 		enemyStatusData = parameterTable.EnemyStatusList [num];
 
 		//enemyNameテキストを表示
 		textEnemyName.GetComponent<Text>().text = "-VS-\n" + enemyStatusData.name;
-		textEnemyName.SetActive(true);
 
 		//画像の設定
 		imageEnemy.GetComponent<Image>().sprite = enemyStatusData.image; //画像を設定
-		imageEnemy.GetComponent<RectTransform>().sizeDelta = enemyStatusData.size; //画像のサイズ
-		imageEnemy.transform.localPosition = enemyStatusData.posi; //画像の位置
 
 		//敵のステータスの設定
 		enemyHp = enemyStatusData.hp; //HPを保存
 		sliderEnemyHp.SetActive(true); //activeをtrueに
-		iTween.ValueTo (sliderEnemyHp, iTween.Hash("from",0,"to",enemyStatusData.hp,"time",2,
+		iTween.ValueTo (sliderEnemyHp, iTween.Hash("from",0,"to",enemyStatusData.hp,"time",0.2,
 			"onupdate","OnUpdateEnemyHp","onupdatetarget", gameObject,"easeType",iTween.EaseType.linear));
 		sliderEnemyHp.GetComponent<Slider>().maxValue = enemyStatusData.hp; //敵のHPスライダーの最大値を設定
 
+		nextStageAnimation.GetComponent<NextStageAnimationScript> ().goNextStage (enemyStatusData.size, enemyStatusData.posi);
+
 
 		//delay秒後にStartBattleを呼ぶ
-		StartCoroutine (StartBattle (2, num));
+		StartCoroutine (StartBattle (6, num));
 
 	}
 
@@ -234,6 +262,8 @@ public class BattleSceneKimManager : MonoBehaviour {
 		yield return new WaitForSeconds(delay);
 
 		/*処理*/
+		//画面操作可能に
+		MakeAble();
 		//攻撃生成
 		createEnemyAttack.GetComponent<CreateEnemyAttack>().GenerateEnemyAttack(enemyStatusData.enemyAttackPatternList);
 
@@ -241,87 +271,5 @@ public class BattleSceneKimManager : MonoBehaviour {
 		textEnemyName.SetActive(false);
 
 	}
-
-	void goForward(){
-
-		for (int i = 0; i < 10; i++) {
-
-			//変数宣言
-			float posX = imagePillar [i].transform.localPosition.x;
-			float posY = imagePillar [i].transform.localPosition.x;
-			float width = imagePillar [i].GetComponent<RectTransform> ().sizeDelta.x;
-			float height = imagePillar [i].GetComponent<RectTransform> ().sizeDelta.y;
-			float time = 3f;
-
-
-			switch ((int)posX) {
-			case -368:
-				iTween.MoveTo (imagePillar [i].gameObject, 
-					iTween.Hash ("position", new Vector3 (-450.0f, 515.0f, 0.0f),
-						"isLocal",true,"time",time,"EaseType",iTween.EaseType.linear));
-				iTween.ScaleTo (imagePillar [i].gameObject,
-					iTween.Hash ("x", 0.34, "y", 0.34,"time",time,"EaseType",iTween.EaseType.linear));
-				break;
-			case 368:
-				iTween.MoveTo (imagePillar [i].gameObject, 
-					iTween.Hash ("position", new Vector3 (450.0f, 515.0f, 0.0f),"isLocal",true,"time",time,"EaseType",iTween.EaseType.linear));
-				iTween.ScaleTo (imagePillar [i].gameObject,
-					iTween.Hash ("x", 0.34, "y", 0.34,"time",time,"EaseType",iTween.EaseType.linear));
-				break;
-			case -450:
-				iTween.MoveTo (imagePillar [i].gameObject, 
-					iTween.Hash ("position", new Vector3 (-551.0f, 272.0f, 0.0f),"isLocal",true,"time",time,"EaseType",iTween.EaseType.linear));
-				iTween.ScaleTo (imagePillar [i].gameObject,
-					iTween.Hash ("x", 0.7, "y", 0.7,"time",time,"EaseType",iTween.EaseType.linear));
-				break;
-			case 450:
-				iTween.MoveTo (imagePillar [i].gameObject, 
-					iTween.Hash ("position", new Vector3 (551.0f, 272.0f, 0.0f),"isLocal",true,"time",time,"EaseType",iTween.EaseType.linear));
-				iTween.ScaleTo (imagePillar [i].gameObject,
-					iTween.Hash ("x", 0.7, "y", 0.7,"time",time,"EaseType",iTween.EaseType.linear));
-				break;
-			case -551:
-				iTween.MoveTo (imagePillar [i].gameObject, 
-					iTween.Hash ("position", new Vector3 (-735.0f, -46.0f, 0.0f),"isLocal",true,"time",time,"EaseType",iTween.EaseType.linear));
-				iTween.ScaleTo (imagePillar [i].gameObject,
-					iTween.Hash ("x", 1, "y", 1,"time",time,"EaseType",iTween.EaseType.linear));
-				break;
-			case 551:
-				iTween.MoveTo (imagePillar [i].gameObject, 
-					iTween.Hash ("position", new Vector3 (735.0f, -46.0f, 0.0f),"isLocal",true,"time",time,"EaseType",iTween.EaseType.linear));
-				iTween.ScaleTo (imagePillar [i].gameObject,
-					iTween.Hash ("x", 1, "y", 1,"time",time,"EaseType",iTween.EaseType.linear));
-				break;
-			case -735:
-				iTween.MoveTo (imagePillar [i].gameObject, 
-					iTween.Hash ("position", new Vector3 (-1063.0f, -527.0f, 0.0f),"isLocal",true,"time",time,"EaseType",iTween.EaseType.linear));
-				iTween.ScaleTo (imagePillar [i].gameObject,
-					iTween.Hash ("x", 1.4, "y", 1.4,"time",time,"EaseType",iTween.EaseType.linear));
-				break;
-			case 735:
-				iTween.MoveTo (imagePillar [i].gameObject, 
-					iTween.Hash ("position", new Vector3 (1063.0f, -527.0f, 0.0f),"isLocal",true,"time",time,"EaseType",iTween.EaseType.linear));
-				iTween.ScaleTo (imagePillar [i].gameObject,
-					iTween.Hash ("x", 1.4, "y", 1.4,"time",time,"EaseType",iTween.EaseType.linear));
-				break;
-			case -1063:
-				imagePillar [i].transform.localPosition = new Vector3 (-368.0f, 667.0f, 0.0f);
-				imagePillar [i].transform.localScale = new Vector3 (0.06f, 0.06f, 1f); 
-				break;
-			case 1063:
-				imagePillar [i].transform.localPosition = new Vector3 (368.0f, 667.0f, 0.0f);
-				imagePillar [i].transform.localScale = new Vector3 (0.06f, 0.06f, 1f); 
-				break;
-			}
-
-		}
-
-
-
-
-	}
-
-
-
 
 }

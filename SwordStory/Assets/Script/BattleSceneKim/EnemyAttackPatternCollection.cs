@@ -26,7 +26,7 @@ public class EnemyAttackPatternCollection : MonoBehaviour {
 		GameObject attack = (GameObject)Instantiate (prefabEnemyAttack);
 		attack.transform.SetParent (canvas.transform, false);
 		attack.transform.localPosition = new Vector3 (x, y, 0f);
-		attack.transform.SetSiblingIndex (4);
+		attack.transform.SetSiblingIndex (5);
 	}
 
 
