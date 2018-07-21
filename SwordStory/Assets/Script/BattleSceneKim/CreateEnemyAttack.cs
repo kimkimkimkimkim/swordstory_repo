@@ -21,10 +21,9 @@ public class CreateEnemyAttack : MonoBehaviour {
 
 	//メンバ変数
 	private float timeElapsed; //時間を蓄積させる
-	private int counterAttack = 0; //攻撃した回数
-	private int maxAttackCount = 25; //休憩に移るまでの攻撃回数
+	//private int counterAttack = 0; //攻撃した回数
+	//private int maxAttackCount = 25; //休憩に移るまでの攻撃回数
 	private int stagenum; //何番目のステージか
-
 
 	// Use this for initialization
 	void Start () {
@@ -35,6 +34,12 @@ public class CreateEnemyAttack : MonoBehaviour {
 		
 	}
 
+	//BattleSceneKimManagerをリセット
+	public void ResetBattleSceneKimManager(){
+		battleSceneManager.SetActive (false);
+		battleSceneManager.SetActive (true);
+	}
+
 	//敵の攻撃を生成
 	public void GenerateEnemyAttack(List<EnemyAttackPattern> list){
 
@@ -43,20 +48,14 @@ public class CreateEnemyAttack : MonoBehaviour {
 
 		//技を生成
 		for (int i = 0; i < listLen; i++) {
-			Debug.Log ("list[" + i + "].timing = " + list[i].timing + " , " 
-				+ "list[" + i + "].attackType = " + list[i].attackType);
+			
 			StartCoroutine (ChoiceEnemyAttack (list[i].timing, list[i].attackType));
-			if (i == listLen - 1) {
-				//最後の技の時
-				Invoke("ComeToRestTime",0.5f);
+			StartCoroutine (battleSceneManager.GetComponent<BattleSceneKimManager> ().StartPlayerTurn (list[listLen - 1].timing + 0.5f));
 
-			}
 		}
 
-	}
 
-	void ComeToRestTime(){
-		battleSceneManager.GetComponent<BattleSceneKimManager> ().intoRestTime (stagenum);
+
 	}
 
 	//攻撃を生成

@@ -21,6 +21,7 @@ public class SpecialMoveManager : MonoBehaviour {
 	public GameObject createEnemyAttack;
 	public GameObject defenseManager;
 	public GameObject myAttack;
+	public GameObject buttonPlayerAttack; //プレイヤー攻撃ボタン
 
 	//メンバ変数
 	private Vector3 touchStartPos; //タップし始めの位置
@@ -44,6 +45,7 @@ public class SpecialMoveManager : MonoBehaviour {
 		imageShield.SetActive (false);
 		containerOrbImage.SetActive (true);
 		imageTiming.SetActive (true);
+		battleSceneManager.SetActive (true);
 	}
 
 	void OnEnable(){
@@ -55,6 +57,7 @@ public class SpecialMoveManager : MonoBehaviour {
 		for (int i = 0; i < 5; i++) {
 			containerOrbImage.transform.GetChild (i).GetComponent<Image> ().sprite = spriteOrb [0];
 		}
+		battleSceneManager.SetActive (true);
 	}
 	
 	// Update is called once per frame
@@ -87,6 +90,7 @@ public class SpecialMoveManager : MonoBehaviour {
 			}
 			//必殺技アニメーション終了
 			if (timeElapsed >= 6.0f) {
+				Debug.Log("special終了");
 				timeElapsed = 0;
 				imageBack.SetActive (true);
 				textBaku.SetActive (false);
@@ -97,15 +101,17 @@ public class SpecialMoveManager : MonoBehaviour {
 				imageTiming.transform.localPosition = initialTimingImagePos;
 				imageTiming.SetActive (false);
 
-				battleSceneManager.SetActive (true);
 				createEnemyAttack.SetActive (true);
-				myAttack.SetActive (true);
 				defenseManager.SetActive (true);
-				this.gameObject.SetActive (false);
 
+				buttonPlayerAttack.GetComponent<Button> ().interactable = false;
+				battleSceneManager.GetComponent<BattleSceneKimManager>().start();
 
 				//ダメージ計算
 				battleSceneManager.GetComponent<BattleSceneKimManager>().EnemyReceiveAttack(10);
+
+
+				this.gameObject.SetActive (false);
 
 			}
 

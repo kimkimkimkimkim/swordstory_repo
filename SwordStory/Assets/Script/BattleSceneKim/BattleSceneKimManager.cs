@@ -20,17 +20,19 @@ public class BattleSceneKimManager : MonoBehaviour {
 	public ParameterTable parameterTable; //ParameterTable
 	public GameObject textEnemyName; //勝負開始の時に最初に敵の名前を表示するテキスト
 	public GameObject nextStageAnimation; //NextStageAnimation
+	public GameObject enemyAttackPatternCollection; //EnemyAttackPatternCollection
+	public GameObject buttonPlayerAttack; //押したらプライヤーの攻撃になるボタン
 
 	//メンバ変数
-	private float timeEnemyBreak = 10.0f; //敵の休憩時間
-	private float timeElapsed = 0.0f; //時間を蓄積させる
-	private bool isFinishedEnemyAttack = false; //敵の攻撃が終わったかどうか
+	//private float timeEnemyBreak = 10.0f; //敵の休憩時間
+	//private float timeElapsed = 0.0f; //時間を蓄積させる
+	//private bool isFinishedEnemyAttack = false; //敵の攻撃が終わったかどうか
 	private bool isSpecialMove = false; //この攻撃で必殺技になるかどうか
 	private int enemyHp = 100; //敵のHP
 	private int playerHp = 10; //プレイヤーのHP
 	private EnemyStatusData enemyStatusData; //敵のステータス情報が入ったクラス
 
-	private int stageNum = 0;
+	public int stageNum = 0;
 
 
 	void Start(){
@@ -39,41 +41,6 @@ public class BattleSceneKimManager : MonoBehaviour {
 		StartCoroutine (EnemyInit(0, 0));
 
 	}
-
-	//休憩して終わったら攻撃開始
-	public void intoRestTime(int num){
-		//delayは休憩時間
-		StartCoroutine (StartBattle(5,num));
-	}
-
-	/*
-	void OnEnable(){
-		timeElapsed = timeEnemyBreak;
-	}
-
-	void Update(){
-		//敵が休憩に入ったら時間計測開始
-		if (isFinishedEnemyAttack) {
-			timeElapsed += Time.deltaTime;
-		}
-		//指定した時間が経ったら敵の攻撃開始
-		if (timeElapsed >= timeEnemyBreak) {
-			Debug.Log ("敵のターン");
-			timeElapsed = 0.0f;
-			//敵の攻撃開始
-			isFinishedEnemyAttack = false;
-			createEnemyAttack.GetComponent<CreateEnemyAttack> ().enableAttack = true;
-			imageEnemy.GetComponent<EnemyManager> ().MoveEnemyImage ();
-
-		}
-	}
-
-	//敵の攻撃ターンが終わったら受け取る
-	public void EndEnemyAttack(){
-		isFinishedEnemyAttack = true;
-		imageEnemy.GetComponent<EnemyManager> ().RevertToInitPos ();
-	}
-	*/
 
 	//プレイヤーが攻撃を受ける
 	public void PlayerReceiveAttack(int damage){
@@ -89,7 +56,6 @@ public class BattleSceneKimManager : MonoBehaviour {
 		};
 		iTween.ValueTo (sliderEnemyHp, hash);
 		playerHp -= damage;
-		Debug.Log (playerHp);
 		if (playerHp <= 0) {
 			//負け処理
 			sliderMyHp.GetComponent<Slider> ().value = 0;
@@ -148,6 +114,9 @@ public class BattleSceneKimManager : MonoBehaviour {
 				//画面操作不可能にする
 				MakeDisable();
 
+				//BattleSceneKimManagerをリセットする
+				createEnemyAttack.GetComponent<CreateEnemyAttack>().ResetBattleSceneKimManager();
+
 				stageNum++;
 				iTween.ValueTo(imageEnemy, iTween.Hash("from",1f, "to",0f,"time",1.5f,
 					"onupdate","OnUpdateEnemyImageColor","onupdatetarget",gameObject,
@@ -176,7 +145,7 @@ public class BattleSceneKimManager : MonoBehaviour {
 	//必殺技ゲージ上昇
 	public void AscentSpecialMoveGauge(float quantity){
 		//必殺技ゲージ上昇
-		imageSpecialMoveGauge.GetComponent<Image> ().fillAmount += quantity;
+		//imageSpecialMoveGauge.GetComponent<Image> ().fillAmount += quantity;
 
 		if (imageSpecialMoveGauge.GetComponent<Image> ().fillAmount >= 1.0f) {
 			//必殺技発動可能
@@ -220,6 +189,23 @@ public class BattleSceneKimManager : MonoBehaviour {
 		defenseManager.SetActive (true);
 	}
 
+	//攻撃可能
+	void AttackEnable(){
+		myAttack.SetActive (true);
+		defenseManager.SetActive (false);
+	}
+
+	//守備可能
+	void DefenceEnable(){
+		myAttack.SetActive (false);
+		defenseManager.SetActive (true);
+	}
+
+	public void start(){
+
+		StartCoroutine (StartBattle(1f));
+	}
+
 	//敵の初期設定を行う
 	IEnumerator EnemyInit(float delay, int num){
 
@@ -247,7 +233,7 @@ public class BattleSceneKimManager : MonoBehaviour {
 
 
 		//delay秒後にStartBattleを呼ぶ
-		StartCoroutine (StartBattle (6, num));
+		StartCoroutine (StartBattle (6));
 
 	}
 
@@ -256,14 +242,16 @@ public class BattleSceneKimManager : MonoBehaviour {
 	/// </summary>
 	/// <param name="delay">何秒遅延させるか</param>
 	/// <param name="num">EnemyStatudDataの何番目のキャラか</param>
-	IEnumerator StartBattle(float delay, int num){
+	public IEnumerator StartBattle(float delay){
 
 		//delay秒待つ
 		yield return new WaitForSeconds(delay);
 
+		Debug.Log ("enemyTurn");
+
 		/*処理*/
 		//画面操作可能に
-		MakeAble();
+		DefenceEnable();
 		//攻撃生成
 		createEnemyAttack.GetComponent<CreateEnemyAttack>().GenerateEnemyAttack(enemyStatusData.enemyAttackPatternList);
 
@@ -271,5 +259,34 @@ public class BattleSceneKimManager : MonoBehaviour {
 		textEnemyName.SetActive(false);
 
 	}
+
+	//プレイヤーの攻撃ターン
+	public IEnumerator StartPlayerTurn(float delay){
+
+		//delay秒待つ
+		yield return new WaitForSeconds(delay);
+
+		/*自分のターン開始*/
+		buttonPlayerAttack.GetComponent<Button> ().interactable = true;
+	}
+
+	public void StartAttack(){
+		//必殺技発動
+		specialMoveManager.SetActive(true);
+		MakeDisable ();
+
+		isSpecialMove = false;
+	}
+
+	/*
+	void StartEnemyTurn(){
+
+
+	}
+
+	void StartPlayerTurn(){
+
+	}
+	*/
 
 }

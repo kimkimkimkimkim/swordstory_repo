@@ -9,26 +9,42 @@ public class EnemyAttackPatternCollection : MonoBehaviour {
 	public GameObject prefabEnemyAttack; //敵の攻撃オブジェクトプレハブ
 
 	//メンバ変数
-	private float timeElapsed = 0.0f; //時間を蓄積させる
-	private Vector3 posTopLeft = new Vector3(-500f, 700f, 0f); //攻撃を表示する範囲の左上
-	private Vector3 posTopRight = new Vector3(500f, 700f, 0f); //攻撃を表示する範囲の右上
-	private Vector3 posBottomLeft = new Vector3(-500f, -600f, 0f); //攻撃を表示する範囲の左下
-	private Vector3 posBottomRight = new Vector3(500f, -600f, 0f); //攻撃を表示する範囲の右下
+	//private float timeElapsed = 0.0f; //時間を蓄積させる
+	//private Vector3 posTopLeft = new Vector3(-500f, 700f, 0f); //攻撃を表示する範囲の左上
+	//private Vector3 posTopRight = new Vector3(500f, 700f, 0f); //攻撃を表示する範囲の右上
+	//private Vector3 posBottomLeft = new Vector3(-500f, -600f, 0f); //攻撃を表示する範囲の左下
+	//private Vector3 posBottomRight = new Vector3(500f, -600f, 0f); //攻撃を表示する範囲の右下
 	private float distanceSpan33 = 500f; //3×3の攻撃の時の距離間隔
 	private float timeSpan33 = 0.25f; //3×3の攻撃の時の時間間隔
-	private bool isCalled = false; //攻撃を生成し始めたかどうか
+	//private bool isCalled = false; //攻撃を生成し始めたかどうか
 
-	//攻撃を生成
+	private float time = 0;
+
+	/*
+	void FixedUpdate(){
+		
+		time += Time.deltaTime;
+
+		if (Mathf.Approximately (time, 2f))
+			Debug.Log ("timeが２です");
+	}*/
+
+	/// <summary>
+	/// 攻撃を生成
+	/// </summary>
+	/// <returns>The enemy attack.</returns>
+	/// <param name="delay">Delay.</param>
+	/// <param name="x">The x coordinate.</param>
+	/// <param name="y">The y coordinate.</param>
 	IEnumerator CreateEnemyAttack(float delay, float x, float y){
 		//delay秒待つ
 		yield return new WaitForSeconds(delay);
-		/*処理*/
+
 		GameObject attack = (GameObject)Instantiate (prefabEnemyAttack);
 		attack.transform.SetParent (canvas.transform, false);
 		attack.transform.localPosition = new Vector3 (x, y, 0f);
 		attack.transform.SetSiblingIndex (5);
 	}
-
 
 	/*
 	 *  +..
